@@ -37,7 +37,8 @@ if [ ! -f "$config_file" ]; then
   },
   "agents": {
     "defaults": {
-      "modelPreset": "primary"
+      "modelPreset": "primary",
+      "timezone": "Asia/Jakarta"
     }
   },
   "gateway": {
