@@ -39,7 +39,11 @@ if [ ! -f "$config_file" ]; then
     },
     "discord": {
       "enabled": true,
-      "token": "$DISCORD_BOT_TOKEN"
+      "token": "$DISCORD_BOT_TOKEN",
+      "allowFrom": ["*"],
+      "allowChannels": [],
+      "groupPolicy": "mention",
+      "streaming": true
     }
   }
 }
