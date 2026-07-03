@@ -66,7 +66,7 @@ EOF
 fi
 
 # Drop to nanobot user and exec the command
-exec su-exec nanobot nanobot "$@"
+exec gosu nanobot nanobot "$@"
     # Attempt to fix permissions if writable by root
     if [ -w "/" ]; then
         echo "Attempting to fix permissions for $dir..."
