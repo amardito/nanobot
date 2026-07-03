@@ -42,7 +42,7 @@ if [ ! -f "$config_file" ]; then
       "token": "$DISCORD_BOT_TOKEN",
       "allowFrom": ["*"],
       "allowChannels": [],
-      "groupPolicy": "mention",
+      "groupPolicy": "open",
       "streaming": true
     }
   }
