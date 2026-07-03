@@ -38,7 +38,8 @@ if [ ! -f "$config_file" ]; then
       "tokenIssueSecret": "${WEBSOCKET_SECRET:-nanobot-default}"
     },
     "discord": {
-      "botToken": "$DISCORD_BOT_TOKEN"
+      "enabled": true,
+      "token": "$DISCORD_BOT_TOKEN"
     }
   }
 }
