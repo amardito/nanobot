@@ -42,4 +42,4 @@ ENV HOME=/home/nanobot
 EXPOSE 18790 8765
 
 ENTRYPOINT ["entrypoint.sh"]
-CMD ["status"]
+CMD ["gateway"]
