@@ -4,6 +4,11 @@ set -e
 dir="$HOME/.nanobot"
 config_file="$dir/config.json"
 
+# Fix volume ownership if running as root (Railway mounts volumes as root)
+if [ "$(id -u)" = "0" ]; then
+    chown -R 1000:1000 "$dir" 2>/dev/null || true
+fi
+
 # Build comma-separated JSON arrays from env vars (split on ",")
 to_json_array() {
   echo "$1" | tr ',' '\n' | sed 's/^ *//;s/ *$//' | sed 's/.*/"&"/' | paste -sd',' | sed 's/^/[/;s/$/]/'
@@ -56,10 +61,12 @@ if [ ! -f "$config_file" ]; then
   }
 }
 EOF
+    chown 1000:1000 "$config_file" 2>/dev/null || true
     echo "Generated config.json from environment variables."
 fi
 
-if [ -d "$dir" ] && [ ! -w "$dir" ]; then
+# Drop to nanobot user and exec the command
+exec su-exec nanobot nanobot "$@"
     # Attempt to fix permissions if writable by root
     if [ -w "/" ]; then
         echo "Attempting to fix permissions for $dir..."
