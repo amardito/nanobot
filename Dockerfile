@@ -38,7 +38,8 @@ RUN chown -R nanobot:nanobot /home/nanobot/.nanobot
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
 
-USER nanobot
+# Use root user to allow chowning the volume if needed
+USER root
 ENV HOME=/home/nanobot
 
 # Gateway health endpoint and optional WebUI/WebSocket channel ports

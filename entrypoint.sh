@@ -60,6 +60,11 @@ EOF
 fi
 
 if [ -d "$dir" ] && [ ! -w "$dir" ]; then
+    # Attempt to fix permissions if writable by root
+    if [ -w "/" ]; then
+        echo "Attempting to fix permissions for $dir..."
+    chown -R $(id -u):$(id -g) "$dir"
+    fi
     owner_uid=$(stat -c %u "$dir" 2>/dev/null || stat -f %u "$dir" 2>/dev/null)
     cat >&2 <<EOF
 Error: $dir is not writable (owned by UID $owner_uid, running as UID $(id -u)).
