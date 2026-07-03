@@ -4,6 +4,14 @@ set -e
 dir="$HOME/.nanobot"
 config_file="$dir/config.json"
 
+# Build comma-separated JSON arrays from env vars (split on ",")
+to_json_array() {
+  echo "$1" | tr ',' '\n' | sed 's/^ *//;s/ *$//' | sed 's/.*/"&"/' | paste -sd',' | sed 's/^/[/;s/$/]/'
+}
+
+ALLOW_FROM_JSON=$(to_json_array "${DISCORD_ALLOW_FROM:-*}")
+ALLOW_CHANNELS_JSON=$(to_json_array "${DISCORD_ALLOW_CHANNELS:-}")
+
 # Generate config.json from Railway env vars on first boot
 if [ ! -f "$config_file" ]; then
     mkdir -p "$dir"
@@ -40,8 +48,8 @@ if [ ! -f "$config_file" ]; then
     "discord": {
       "enabled": true,
       "token": "$DISCORD_BOT_TOKEN",
-      "allowFrom": ["*"],
-      "allowChannels": [],
+      "allowFrom": $ALLOW_FROM_JSON,
+      "allowChannels": $ALLOW_CHANNELS_JSON,
       "groupPolicy": "open",
       "streaming": true
     }
