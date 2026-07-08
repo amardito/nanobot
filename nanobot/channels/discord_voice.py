@@ -161,13 +161,13 @@ class VoiceManager:
                 # Use yt-dlp to get the audio URL and metadata
                 command = [
                     "yt-dlp",
-                    "-f", "bestaudio[ext=webm]/bestaudio",  # Prefer webm for Discord
-                    "--get-url",
+                    "-f", "bestaudio/best",
                     "--restrict-filenames",
                     "--no-playlist",
                     "--no-warnings",
-                    "--print", "filename",
+                    "--print", "after_move:filepath",
                     "--output", str(self._media_dir / "%(id)s.%(ext)s"),
+                    "-x", "--audio-format", "mp3",
                     url,
                 ]
                 logger.info("Running yt-dlp command: {}", " ".join(command))
