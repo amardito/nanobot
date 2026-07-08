@@ -44,10 +44,11 @@ class VoiceManager:
             return self._voice_clients[guild_id]
 
         try:
+            logger.info("Attempting to connect to voice channel: {}", channel.name)
             voice_client = await channel.connect(timeout=60)
             self._voice_clients[guild_id] = voice_client
             self._audio_queues[guild_id] = asyncio.Queue()
-            logger.info("Joined voice channel: {}", channel.name)
+            logger.info("Successfully joined voice channel: {}", channel.name)
             return voice_client
         except asyncio.TimeoutError:
             logger.error("Timed out connecting to voice channel: {}", channel.name)
