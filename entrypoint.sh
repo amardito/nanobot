@@ -57,7 +57,8 @@ if [ ! -f "$config_file" ]; then
       "allowFrom": $ALLOW_FROM_JSON,
       "allowChannels": $ALLOW_CHANNELS_JSON,
       "groupPolicy": "open",
-      "streaming": true
+      "streaming": true,
+      "intents": 37505
     }
   }
 }
