@@ -17,10 +17,10 @@ to_json_array() {
 ALLOW_FROM_JSON=$(to_json_array "${DISCORD_ALLOW_FROM:-*}")
 ALLOW_CHANNELS_JSON=$(to_json_array "${DISCORD_ALLOW_CHANNELS:-}")
 
-# Generate config.json from Railway env vars on first boot
-if [ ! -f "$config_file" ]; then
-    mkdir -p "$dir"
-    cat > "$config_file" <<EOF
+# Always regenerate config.json from env vars (ensures updates apply on redeploy)
+rm -f "$config_file"
+mkdir -p "$dir"
+cat > "$config_file" <<EOF
 {
   "providers": {
     "custom": {
@@ -65,7 +65,6 @@ if [ ! -f "$config_file" ]; then
 EOF
     chown 1000:1000 "$config_file" 2>/dev/null || true
     echo "Generated config.json from environment variables."
-fi
 
 # Drop to nanobot user and exec the command
 exec gosu nanobot nanobot "$@"
