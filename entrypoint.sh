@@ -67,6 +67,7 @@ EOF
     echo "Generated config.json from environment variables."
 
 # Drop to nanobot user and exec the command
+export PATH="/home/nanobot/.local/bin:$PATH"
 exec gosu nanobot nanobot "$@"
     # Attempt to fix permissions if writable by root
     if [ -w "/" ]; then
