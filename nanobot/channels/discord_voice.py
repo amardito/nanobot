@@ -44,11 +44,14 @@ class VoiceManager:
             return self._voice_clients[guild_id]
 
         try:
-            voice_client = await channel.connect()
+            voice_client = await channel.connect(timeout=60)
             self._voice_clients[guild_id] = voice_client
             self._audio_queues[guild_id] = asyncio.Queue()
             logger.info("Joined voice channel: {}", channel.name)
             return voice_client
+        except asyncio.TimeoutError:
+            logger.error("Timed out connecting to voice channel: {}", channel.name)
+            return None
         except Exception:
             logger.exception("Failed to join voice channel: {}", channel.name)
             return None
@@ -103,6 +106,8 @@ class VoiceManager:
             while not self._audio_queues[guild_id].empty():
                 try:
                     self._audio_queues[guild_id].get_nowait()
+                    # Delete the file after it's removed from the queue
+                    # Path(audio_path).unlink(missing_ok=True)
                 except asyncio.QueueEmpty:
                     break
         if guild_id in self._voice_clients and self._voice_clients[guild_id].is_playing():
