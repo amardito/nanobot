@@ -736,11 +736,15 @@ class DiscordChannel(BaseChannel):
             if message.reference and message.reference.message_id
             else None
         )
-        return {
+        metadata = {
             "message_id": str(message.id),
             "guild_id": str(message.guild.id) if message.guild else None,
             "reply_to": reply_to,
         }
+        # Add voice channel ID if the sender is in a voice channel
+        if message.guild and message.author.voice and message.author.voice.channel:
+            metadata["voice_channel_id"] = str(message.author.voice.channel.id)
+        return metadata
 
     def _should_respond_in_group(self, message: discord.Message, content: str) -> bool:
         """Check if the bot should respond in a guild channel based on policy."""
