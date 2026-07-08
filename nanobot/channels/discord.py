@@ -21,6 +21,9 @@ from nanobot.config.paths import get_media_dir
 from nanobot.config.schema import Base
 from nanobot.utils.helpers import safe_filename, split_message
 
+from nanobot.agent.tools.nanoplay import set_voice_manager
+from nanobot.channels.discord_voice import VoiceManager
+
 DISCORD_AVAILABLE = importlib.util.find_spec("discord") is not None
 if TYPE_CHECKING:
     import aiohttp
@@ -395,6 +398,7 @@ class DiscordChannel(BaseChannel):
         self._working_emoji_tasks: dict[str, asyncio.Task[None]] = {}
         self._stream_bufs: dict[str, _StreamBuf] = {}
         self._known_channels: dict[str, Any] = {}
+        self._voice_manager: VoiceManager | None = None
 
     def _remember_channel(self, channel: Any) -> None:
         self._known_channels[self._channel_key(channel)] = channel
@@ -438,6 +442,12 @@ class DiscordChannel(BaseChannel):
                 proxy=self.config.proxy,
                 proxy_auth=proxy_auth,
             )
+
+            # Initialize voice manager and make it globally available
+            self._voice_manager = VoiceManager(self._client)
+            set_voice_manager(self._voice_manager)
+            await self._voice_manager.start()
+
         except Exception:
             self.logger.exception("Failed to initialize client")
             self._client = None
@@ -460,6 +470,8 @@ class DiscordChannel(BaseChannel):
     async def stop(self) -> None:
         """Stop the Discord channel."""
         self._running = False
+        if self._voice_manager:
+            await self._voice_manager.stop()
         await self._reset_runtime_state(close_client=True)
 
     async def send(self, msg: OutboundMessage) -> None:
